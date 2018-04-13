@@ -6,42 +6,27 @@ import com.vk.api.sdk.exceptions.ClientException;
 import com.vk.api.sdk.exceptions.OAuthException;
 import com.vk.api.sdk.httpclient.HttpTransportClient;
 import com.vk.api.sdk.objects.UserAuthResponse;
+import com.vk.api.sdk.objects.wall.WallPostFull;
 import com.vk.api.sdk.objects.wall.responses.GetResponse;
 
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
-import static com.vk.api.sdk.queries.wall.WallGetFilter.OWNER;
+import java.io.*;
+import java.util.Scanner;
 
 public class Main {
 
-    public static final int APP_ID = ;
-    public static String CLIENT_SECRET = "";
-    public static String REDIRECT_URI = "https://oauth.vk.com/authorize";
-    public static String code = "";
+    private static final int APP_ID = ;
+    private static String CLIENT_SECRET = "";
+    private static String REDIRECT_URI = "https://oauth.vk.com/authorize";
+    private static String code = "944489413cfbc4a8a2";
+
+    private static Scanner reader = new Scanner(System.in);
 
     public static void main(String[] args) throws IOException {
+        System.out.print("Enter code: ");
+        code = reader.next();
+
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vk = new VkApiClient(transportClient);
-        /*String url = "https://oauth.vk.com/authorize?client_id=6446474&display=page&redirect_uri=https://oauth.vk.com/authorize&scope=friends,photoes&response_type=code&v=5.74";
-        URL obj = new URL(url);
-        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
-        connection.setRequestMethod("GET");
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        System.out.println(response.toString());*/
-
 
         UserAuthResponse authResponse = null;
         try {
@@ -54,20 +39,36 @@ public class Main {
             e.printStackTrace();
         }
 
+        System.out.print("Enter group name (next folder name): ");
+        String groupName = reader.next();
+        System.out.print("Enter group id: ");
+        int groupId = reader.nextInt() * (-1);
+        System.out.print("Enter count of notes: ");
+        int count = reader.nextInt();
+
         UserActor actor = new UserActor(authResponse.getUserId(), authResponse.getAccessToken());
         GetResponse getResponse = null;
         try {
             getResponse = vk.wall().get(actor)
-                    .ownerId(1)
-                    .count(100)
-                    .offset(5)
-                    .filter(OWNER)
+                    .ownerId(groupId)
+                    .domain(groupName)
+                    .count(count)
                     .execute();
         } catch (ApiException | ClientException e) {
             e.printStackTrace();
         }
 
-        System.out.println(getResponse);
+        for (WallPostFull wallPostFull : getResponse.getItems()) {
+            String res = wallPostFull.getText();
+
+            FileWriter fileWriter = new FileWriter("data-set/" + groupName + ".txt", true);
+            PrintWriter printWriter = new PrintWriter(fileWriter);
+            printWriter.print(res);
+            printWriter.println();
+            printWriter.println();
+            printWriter.close();
+        }
+        System.out.println("done");
     }
 
 }
