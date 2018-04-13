@@ -19,14 +19,29 @@ import static com.vk.api.sdk.queries.wall.WallGetFilter.OWNER;
 
 public class Main {
 
-    public static final int APP_ID = 6446474;
-    public static String CLIENT_SECRET = "LKq7ltJISObNZOmxoIih";
+    public static final int APP_ID = ;
+    public static String CLIENT_SECRET = "";
     public static String REDIRECT_URI = "https://oauth.vk.com/authorize";
-    public static String code = "3eddcb7d1821228e62";
+    public static String code = "";
 
     public static void main(String[] args) throws IOException {
         TransportClient transportClient = new HttpTransportClient();
         VkApiClient vk = new VkApiClient(transportClient);
+        /*String url = "https://oauth.vk.com/authorize?client_id=6446474&display=page&redirect_uri=https://oauth.vk.com/authorize&scope=friends,photoes&response_type=code&v=5.74";
+        URL obj = new URL(url);
+        HttpURLConnection connection = (HttpURLConnection) obj.openConnection();
+        connection.setRequestMethod("GET");
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        System.out.println(response.toString());*/
+
 
         UserAuthResponse authResponse = null;
         try {
